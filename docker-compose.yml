@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # Laravel App (Backend)
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-aura}
+      - DB_USERNAME=${DB_USERNAME:-aura_user}
+      - DB_PASSWORD=${DB_PASSWORD:-aura_password}
+      - REDIS_HOST=redis
+      - PYTHON_SERVICE_URL=http://ai_service:8001
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY:-super_secret_internal_key}
+    depends_on:
+      - db
+      - redis
+
+  # Python FastAPI App (AI Service)
+  ai_service:
+    build:
+      context: ./ai_service
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./ai_service:/app
+      - ./backend/storage/app/public:/var/www/html/storage/app/public:ro
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_DATABASE:-aura}
+      - DB_USER=${DB_USERNAME:-aura_user}
+      - DB_PASSWORD=${DB_PASSWORD:-aura_password}
+      - REDIS_HOST=redis
+      - INTERNAL_API_KEY=${INTERNAL_API_KEY:-super_secret_internal_key}
+      - LLM_API_KEY=${LLM_API_KEY:-your_llm_api_key_here}
+      - SIMILARITY_THRESHOLD=${SIMILARITY_THRESHOLD:-0.35}
+      - RAG_TOP_K=${RAG_TOP_K:-5}
+    depends_on:
+      - db
+      - redis
+
+  # PostgreSQL database with pgvector
+  db:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-aura}
+      POSTGRES_USER: ${DB_USERNAME:-aura_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-aura_password}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  # Redis for Queue and Cache
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  db-data:
+  redis-data:
