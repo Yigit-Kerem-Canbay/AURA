@@ -178,7 +178,7 @@ async def chat(
                 "Content-Type": "application/json"
             }
             data = {
-                "model": "llama-3.1-8b-instant",
+                "model": "groq/compound-mini",
                 "response_format": {"type": "json_object"},
                 "messages": [
                     {"role": "system", "content": system_prompt},
@@ -277,7 +277,7 @@ async def audit_website(
                     "Content-Type": "application/json"
                 }
                 data = {
-                    "model": "llama-3.1-8b-instant",
+                    "model": "groq/compound-mini",
                     "messages": [
                         {"role": "user", "content": prompt}
                     ]

@@ -91,6 +91,7 @@ class ChatController extends Controller
             return response()->json(['error' => 'AI Service failed to respond', 'details' => $response->body()], 500);
 
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Chat error: ' . $e->getMessage() . ' - Trace: ' . $e->getTraceAsString());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
