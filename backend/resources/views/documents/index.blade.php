@@ -15,7 +15,7 @@
             Yeni Doküman Yükle
         </h3>
         
-        <form action="{{ url('/documents/upload') }}" method="POST" enctype="multipart/form-data" class="relative z-10">
+        <form action="{{ route('documents.store') }}" method="POST" enctype="multipart/form-data" class="relative z-10">
             @csrf
             <label for="file-upload" class="border-2 border-dashed border-blue-200 rounded-2xl p-12 flex flex-col items-center justify-center text-center bg-white/50 hover:bg-blue-50/50 hover:border-blue-400 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md">
                 <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-5 group-hover:-translate-y-2 transition-transform duration-300 shadow-sm">
